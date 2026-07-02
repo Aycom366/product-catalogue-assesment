@@ -1,35 +1,57 @@
-import { Link, Stack, useRouter } from 'expo-router';
-import { useCallback } from 'react';
-import { FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
+import { Link, Stack, useRouter } from "expo-router";
+import { useCallback } from "react";
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  View,
+} from "react-native";
 
-import { CategoryFilter } from '@/components/category-filter';
-import { EmptyState } from '@/components/empty-state';
-import { ErrorView } from '@/components/error-view';
-import { ProductCard } from '@/components/product-card';
-import { ProductSkeleton } from '@/components/product-skeleton';
-import { SearchBar } from '@/components/search-bar';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
-import { useProductFilters } from '@/hooks/use-product-filters';
-import { useProducts } from '@/hooks/use-products';
-import { useTheme } from '@/hooks/use-theme';
-import { useFavoritesStore } from '@/store/favorites-store';
-import { ALL_CATEGORIES } from '@/utils/product-filters';
-import type { Product } from '@/types/product';
+import { CategoryFilter } from "@/components/category-filter";
+import { EmptyState } from "@/components/empty-state";
+import { ErrorView } from "@/components/error-view";
+import { ProductCard } from "@/components/product-card";
+import { ProductSkeleton } from "@/components/product-skeleton";
+import { SearchBar } from "@/components/search-bar";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Spacing } from "@/constants/theme";
+import { useProductFilters } from "@/hooks/use-product-filters";
+import { useProducts } from "@/hooks/use-products";
+import { useTheme } from "@/hooks/use-theme";
+import { useFavoritesStore } from "@/store/favorites-store";
+import type { Product } from "@/types/product";
+import { ALL_CATEGORIES } from "@/utils/product-filters";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const SKELETON_COUNT = 6;
 
 export default function ProductListScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { data: products, isLoading, isError, error, refetch, isRefetching } = useProducts();
-  const { search, setSearch, category, setCategory, categories, filteredProducts } = useProductFilters(products);
+  const {
+    data: products,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isRefetching,
+  } = useProducts();
+  const {
+    search,
+    setSearch,
+    category,
+    setCategory,
+    categories,
+    filteredProducts,
+  } = useProductFilters(products);
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
 
   const goToProduct = useCallback(
-    (id: number) => router.push({ pathname: '/product/[id]', params: { id: String(id) } }),
+    (id: number) =>
+      router.push({ pathname: "/product/[id]", params: { id: String(id) } }),
     [router],
   );
 
@@ -49,10 +71,14 @@ export default function ProductListScreen() {
 
   const headerRight = useCallback(
     () => (
-      <Link href="/favorites" asChild>
-        <Pressable accessibilityRole="button" accessibilityLabel="View favourites" hitSlop={10}>
+      <Link href='/favorites' asChild>
+        <Pressable
+          accessibilityRole='button'
+          accessibilityLabel='View favourites'
+          hitSlop={10}
+        >
           <ThemedText style={styles.headerIcon}>
-            {favoriteIds.length > 0 ? '♥' : '♡'}
+            {favoriteIds.length > 0 ? "♥" : "♡"}
           </ThemedText>
         </Pressable>
       </Link>
@@ -79,43 +105,62 @@ export default function ProductListScreen() {
     return (
       <ThemedView style={styles.container}>
         <Stack.Screen options={{ headerRight }} />
-        <ErrorView message={error instanceof Error ? error.message : undefined} onRetry={refetch} />
+        <ErrorView
+          message={error instanceof Error ? error.message : undefined}
+          onRetry={refetch}
+        />
       </ThemedView>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <Stack.Screen options={{ headerRight }} />
-      <SearchBar value={search} onChangeText={setSearch} />
-      <CategoryFilter categories={categories} selected={category} onSelect={setCategory} />
-      <FlatList
-        data={filteredProducts}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={renderItem}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.listContent}
-        refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={theme.tint} />
-        }
-        ListEmptyComponent={
-          <EmptyState
-            title="No products found"
-            message={
-              category !== ALL_CATEGORIES
-                ? `No results in "${category}"${search ? ` for "${search}"` : ''}.`
-                : `No results for "${search}".`
-            }
-          />
-        }
-      />
-    </ThemedView>
+    <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
+      <ThemedView style={styles.container}>
+        <Stack.Screen options={{ headerRight }} />
+        <SearchBar value={search} onChangeText={setSearch} />
+
+        <CategoryFilter
+          categories={categories}
+          selected={category}
+          onSelect={setCategory}
+        />
+
+        <FlatList
+          style={styles.list}
+          data={filteredProducts}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={renderItem}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch}
+              tintColor={theme.tint}
+            />
+          }
+          ListEmptyComponent={
+            <EmptyState
+              title='No products found'
+              message={
+                category !== ALL_CATEGORIES
+                  ? `No results in "${category}"${search ? ` for "${search}"` : ""}.`
+                  : `No results for "${search}".`
+              }
+            />
+          }
+        />
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  list: {
     flex: 1,
   },
   row: {
@@ -125,19 +170,19 @@ const styles = StyleSheet.create({
   listContent: {
     paddingBottom: Spacing.five,
     paddingTop: Spacing.two,
+    rowGap: Spacing.three,
     flexGrow: 1,
   },
   skeletonGrid: {
     flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing.three,
     paddingHorizontal: Spacing.three,
     paddingTop: Spacing.three,
   },
   cardWrapper: {
     flex: 1,
-    minWidth: '45%',
   },
   headerIcon: {
     fontSize: 22,

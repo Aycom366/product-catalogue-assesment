@@ -1,9 +1,9 @@
-import { Pressable, StyleSheet, TextInput } from 'react-native';
+import { Pressable, StyleSheet, TextInput } from "react-native";
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 
 interface SearchBarProps {
   value: string;
@@ -11,11 +11,15 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ value, onChangeText, placeholder = 'Search products' }: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChangeText,
+  placeholder = "Search products",
+}: SearchBarProps) {
   const theme = useTheme();
 
   return (
-    <ThemedView type="backgroundElement" style={styles.container}>
+    <ThemedView type='backgroundElement' style={styles.container}>
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -23,18 +27,19 @@ export function SearchBar({ value, onChangeText, placeholder = 'Search products'
         placeholderTextColor={theme.textSecondary}
         style={[styles.input, { color: theme.text }]}
         autoCorrect={false}
-        autoCapitalize="none"
-        returnKeyType="search"
-        accessibilityLabel="Search products by title"
-        testID="search-input"
+        autoCapitalize='none'
+        returnKeyType='search'
+        accessibilityLabel='Search products by title'
+        testID='search-input'
       />
       {value.length > 0 && (
         <Pressable
-          onPress={() => onChangeText('')}
+          onPress={() => onChangeText("")}
           hitSlop={10}
-          accessibilityRole="button"
-          accessibilityLabel="Clear search">
-          <ThemedText themeColor="textSecondary" style={styles.clear}>
+          accessibilityRole='button'
+          accessibilityLabel='Clear search'
+        >
+          <ThemedText themeColor='textSecondary' style={styles.clear}>
             ✕
           </ThemedText>
         </Pressable>
@@ -45,9 +50,10 @@ export function SearchBar({ value, onChangeText, placeholder = 'Search products'
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: Spacing.three,
+    marginHorizontal: Spacing.three,
     paddingHorizontal: Spacing.three,
   },
   input: {

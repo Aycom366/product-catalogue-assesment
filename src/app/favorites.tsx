@@ -1,16 +1,16 @@
-import { useRouter } from 'expo-router';
-import { useCallback, useMemo } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { useRouter } from "expo-router";
+import { useCallback, useMemo } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
 
-import { EmptyState } from '@/components/empty-state';
-import { ErrorView } from '@/components/error-view';
-import { LoadingView } from '@/components/loading-view';
-import { ProductCard } from '@/components/product-card';
-import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
-import { useProducts } from '@/hooks/use-products';
-import { useFavoritesStore } from '@/store/favorites-store';
-import type { Product } from '@/types/product';
+import { EmptyState } from "@/components/empty-state";
+import { ErrorView } from "@/components/error-view";
+import { LoadingView } from "@/components/loading-view";
+import { ProductCard } from "@/components/product-card";
+import { ThemedView } from "@/components/themed-view";
+import { Spacing } from "@/constants/theme";
+import { useProducts } from "@/hooks/use-products";
+import { useFavoritesStore } from "@/store/favorites-store";
+import type { Product } from "@/types/product";
 
 export default function FavoritesScreen() {
   const router = useRouter();
@@ -19,12 +19,14 @@ export default function FavoritesScreen() {
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
 
   const favoriteProducts = useMemo(
-    () => (products ?? []).filter((product) => favoriteIds.includes(product.id)),
+    () =>
+      (products ?? []).filter((product) => favoriteIds.includes(product.id)),
     [products, favoriteIds],
   );
 
   const goToProduct = useCallback(
-    (id: number) => router.push({ pathname: '/product/[id]', params: { id: String(id) } }),
+    (id: number) =>
+      router.push({ pathname: "/product/[id]", params: { id: String(id) } }),
     [router],
   );
 
@@ -45,7 +47,7 @@ export default function FavoritesScreen() {
   if (isLoading) {
     return (
       <ThemedView style={styles.container}>
-        <LoadingView message="Loading favourites…" />
+        <LoadingView message='Loading favourites…' />
       </ThemedView>
     );
   }
@@ -68,7 +70,10 @@ export default function FavoritesScreen() {
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
-          <EmptyState title="No favourites yet" message="Tap the heart on a product to save it here." />
+          <EmptyState
+            title='No favourites yet'
+            message='Tap the heart on a product to save it here.'
+          />
         }
       />
     </ThemedView>
@@ -90,6 +95,6 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     flex: 1,
-    minWidth: '45%',
+    minWidth: "45%",
   },
 });

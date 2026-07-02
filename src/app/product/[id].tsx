@@ -1,28 +1,36 @@
-import { Image } from 'expo-image';
-import { Stack, useLocalSearchParams } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Image } from "expo-image";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { ScrollView, StyleSheet, View } from "react-native";
 
-import { ErrorView } from '@/components/error-view';
-import { FavoriteButton } from '@/components/favorite-button';
-import { LoadingView } from '@/components/loading-view';
-import { RatingStars } from '@/components/rating-stars';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
-import { useProduct } from '@/hooks/use-product';
-import { useFavoritesStore } from '@/store/favorites-store';
+import { ErrorView } from "@/components/error-view";
+import { FavoriteButton } from "@/components/favorite-button";
+import { LoadingView } from "@/components/loading-view";
+import { RatingStars } from "@/components/rating-stars";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Spacing } from "@/constants/theme";
+import { useProduct } from "@/hooks/use-product";
+import { useFavoritesStore } from "@/store/favorites-store";
 
 export default function ProductDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const productId = Number(id);
-  const { data: product, isLoading, isError, error, refetch } = useProduct(productId);
-  const isFavorite = useFavoritesStore((state) => (Number.isFinite(productId) ? state.isFavorite(productId) : false));
+  const {
+    data: product,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useProduct(productId);
+  const isFavorite = useFavoritesStore((state) =>
+    Number.isFinite(productId) ? state.isFavorite(productId) : false,
+  );
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
 
   if (isLoading) {
     return (
       <ThemedView style={styles.container}>
-        <LoadingView message="Loading product…" />
+        <LoadingView message='Loading product…' />
       </ThemedView>
     );
   }
@@ -30,46 +38,62 @@ export default function ProductDetailsScreen() {
   if (isError || !product) {
     return (
       <ThemedView style={styles.container}>
-        <ErrorView message={error instanceof Error ? error.message : undefined} onRetry={refetch} />
+        <ErrorView
+          message={error instanceof Error ? error.message : undefined}
+          onRetry={refetch}
+        />
       </ThemedView>
     );
   }
 
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: product.title.length > 24 ? `${product.title.slice(0, 24)}…` : product.title }} />
-      <ScrollView contentContainerStyle={styles.content}>
+      <Stack.Screen
+        options={{
+          title: product.title,
+        }}
+      />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
         <View style={styles.imageWrapper}>
           <Image
             source={{ uri: product.image }}
             style={styles.image}
-            contentFit="contain"
+            contentFit='contain'
             transition={150}
             accessibilityLabel={product.title}
           />
           <View style={styles.favoriteWrapper}>
-            <FavoriteButton isFavorite={isFavorite} onToggle={() => toggleFavorite(product.id)} />
+            <FavoriteButton
+              isFavorite={isFavorite}
+              onToggle={() => toggleFavorite(product.id)}
+            />
           </View>
         </View>
 
         <View style={styles.body}>
-          <ThemedText type="small" themeColor="tint" style={styles.category}>
+          <ThemedText type='small' themeColor='tint' style={styles.category}>
             {product.category}
           </ThemedText>
-          <ThemedText type="title" style={styles.title}>
+          <ThemedText type='title' style={styles.title}>
             {product.title}
           </ThemedText>
 
-          <RatingStars rate={product.rating?.rate ?? 0} count={product.rating?.count} />
+          <RatingStars
+            rate={product.rating?.rate ?? 0}
+            count={product.rating?.count}
+          />
 
-          <ThemedText type="subtitle" style={styles.price}>
+          <ThemedText type='subtitle' style={styles.price}>
             ${product.price.toFixed(2)}
           </ThemedText>
 
-          <ThemedText type="smallBold" style={styles.sectionLabel}>
+          <ThemedText type='smallBold' style={styles.sectionLabel}>
             Description
           </ThemedText>
-          <ThemedText themeColor="textSecondary" style={styles.description}>
+          <ThemedText themeColor='textSecondary' style={styles.description}>
             {product.description}
           </ThemedText>
         </View>
@@ -87,15 +111,15 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     height: 320,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     padding: Spacing.four,
   },
   favoriteWrapper: {
-    position: 'absolute',
+    position: "absolute",
     top: Spacing.three,
     right: Spacing.three,
   },
@@ -104,7 +128,7 @@ const styles = StyleSheet.create({
     gap: Spacing.two,
   },
   category: {
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   title: {
     fontSize: 24,

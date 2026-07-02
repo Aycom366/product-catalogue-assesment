@@ -1,8 +1,9 @@
-import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, StyleSheet } from "react-native";
 
-import { ThemedText } from '@/components/themed-text';
-import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { ThemedText } from "@/components/themed-text";
+import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import { ThemedView } from "./themed-view";
 
 interface CategoryFilterProps {
   categories: string[];
@@ -10,37 +11,53 @@ interface CategoryFilterProps {
   onSelect: (category: string) => void;
 }
 
-export function CategoryFilter({ categories, selected, onSelect }: CategoryFilterProps) {
+export function CategoryFilter({
+  categories,
+  selected,
+  onSelect,
+}: CategoryFilterProps) {
   const theme = useTheme();
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.content}
-      accessibilityRole="tablist">
-      {categories.map((category) => {
-        const isSelected = category === selected;
-        return (
-          <Pressable
-            key={category}
-            onPress={() => onSelect(category)}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: isSelected }}
-            testID={`category-tab-${category}`}
-            style={[
-              styles.pill,
-              { backgroundColor: isSelected ? theme.tint : theme.backgroundElement },
-            ]}>
-            <ThemedText
-              type="smallBold"
-              style={[styles.label, { color: isSelected ? '#ffffff' : theme.text }]}>
-              {category}
-            </ThemedText>
-          </Pressable>
-        );
-      })}
-    </ScrollView>
+    <ThemedView>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+        accessibilityRole='tablist'
+      >
+        {categories.map((category) => {
+          const isSelected = category === selected;
+          return (
+            <Pressable
+              key={category}
+              onPress={() => onSelect(category)}
+              accessibilityRole='tab'
+              accessibilityState={{ selected: isSelected }}
+              testID={`category-tab-${category}`}
+              style={[
+                styles.pill,
+                {
+                  backgroundColor: isSelected
+                    ? theme.tint
+                    : theme.backgroundElement,
+                },
+              ]}
+            >
+              <ThemedText
+                type='smallBold'
+                style={[
+                  styles.label,
+                  { color: isSelected ? "#ffffff" : theme.text },
+                ]}
+              >
+                {category}
+              </ThemedText>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+    </ThemedView>
   );
 }
 
@@ -54,8 +71,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
     borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center",
   },
   label: {
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
 });

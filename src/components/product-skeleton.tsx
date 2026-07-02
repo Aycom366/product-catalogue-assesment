@@ -1,8 +1,16 @@
-import { useEffect, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 
-import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { Spacing } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 
 /**
  * Pulsing placeholder shown in the grid while the initial product fetch is
@@ -10,28 +18,52 @@ import { useTheme } from '@/hooks/use-theme';
  */
 export function ProductSkeleton() {
   const theme = useTheme();
-  const [opacity] = useState(() => new Animated.Value(0.4));
+  const opacity = useSharedValue(0.4);
 
   useEffect(() => {
-    const pulse = Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, { toValue: 1, duration: 600, useNativeDriver: true }),
-        Animated.timing(opacity, { toValue: 0.4, duration: 600, useNativeDriver: true }),
-      ]),
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 600, easing: Easing.linear }),
+        withTiming(0.4, { duration: 600, easing: Easing.linear }),
+      ),
+      -1,
     );
-    pulse.start();
-    return () => pulse.stop();
   }, [opacity]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
   return (
     <Animated.View
-      style={[styles.card, { backgroundColor: theme.backgroundElement, opacity }]}
-      testID="product-skeleton">
-      <View style={[styles.image, { backgroundColor: theme.backgroundSelected }]} />
+      style={[
+        styles.card,
+        { backgroundColor: theme.backgroundElement },
+        animatedStyle,
+      ]}
+      testID='product-skeleton'
+    >
+      <View
+        style={[styles.image, { backgroundColor: theme.backgroundSelected }]}
+      />
       <View style={styles.details}>
-        <View style={[styles.line, styles.short, { backgroundColor: theme.backgroundSelected }]} />
-        <View style={[styles.line, { backgroundColor: theme.backgroundSelected }]} />
-        <View style={[styles.line, styles.short, { backgroundColor: theme.backgroundSelected }]} />
+        <View
+          style={[
+            styles.line,
+            styles.short,
+            { backgroundColor: theme.backgroundSelected },
+          ]}
+        />
+        <View
+          style={[styles.line, { backgroundColor: theme.backgroundSelected }]}
+        />
+        <View
+          style={[
+            styles.line,
+            styles.short,
+            { backgroundColor: theme.backgroundSelected },
+          ]}
+        />
       </View>
     </Animated.View>
   );
@@ -41,7 +73,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     borderRadius: Spacing.three,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   image: {
     height: 140,
@@ -55,6 +87,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   short: {
-    width: '60%',
+    width: "60%",
   },
 });

@@ -1,7 +1,14 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import type { Product } from '@/types/product';
-import { ALL_CATEGORIES, filterProducts, getAvailableCategories } from '@/utils/product-filters';
+import { useDebounce } from "@/hooks/use-debounce";
+import type { Product } from "@/types/product";
+import {
+  ALL_CATEGORIES,
+  filterProducts,
+  getAvailableCategories,
+} from "@/utils/product-filters";
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 /**
  * Owns the search text + category selection UI state for the product list
@@ -10,15 +17,26 @@ import { ALL_CATEGORIES, filterProducts, getAvailableCategories } from '@/utils/
  * behaviour can be unit tested independently of any screen.
  */
 export function useProductFilters(products: Product[] | undefined) {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>(ALL_CATEGORIES);
+  const debouncedSearch = useDebounce(search, SEARCH_DEBOUNCE_MS);
 
-  const categories = useMemo(() => getAvailableCategories(products ?? []), [products]);
-
-  const filteredProducts = useMemo(
-    () => filterProducts(products ?? [], { search, category }),
-    [products, search, category],
+  const categories = useMemo(
+    () => getAvailableCategories(products ?? []),
+    [products],
   );
 
-  return { search, setSearch, category, setCategory, categories, filteredProducts };
+  const filteredProducts = useMemo(
+    () => filterProducts(products ?? [], { search: debouncedSearch, category }),
+    [products, debouncedSearch, category],
+  );
+
+  return {
+    search,
+    setSearch,
+    category,
+    setCategory,
+    categories,
+    filteredProducts,
+  };
 }

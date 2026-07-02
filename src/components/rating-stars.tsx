@@ -1,6 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from "react-native";
 
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from "@/components/themed-text";
+import { useMemo } from "react";
 
 interface RatingStarsProps {
   rate: number;
@@ -16,21 +17,28 @@ const STAR_COUNT = 5;
 export function RatingStars({ rate, count }: RatingStarsProps) {
   const rounded = Math.round(rate * 2) / 2;
 
-  const stars = Array.from({ length: STAR_COUNT }, (_, index) => {
-    const position = index + 1;
-    if (rounded >= position) return '★';
-    if (rounded >= position - 0.5) return '⯨';
-    return '☆';
-  });
+  const stars = useMemo(
+    () =>
+      Array.from({ length: STAR_COUNT }, (_, index) => {
+        const position = index + 1;
+        if (rounded >= position) return "★";
+        if (rounded >= position - 0.5) return "⯨";
+        return "☆";
+      }),
+    [rounded],
+  );
 
   return (
-    <View style={styles.container} accessibilityLabel={`Rated ${rate} out of 5${count ? ` from ${count} reviews` : ''}`}>
-      <ThemedText themeColor="tint" style={styles.stars}>
-        {stars.join('')}
+    <View
+      style={styles.container}
+      accessibilityLabel={`Rated ${rate} out of 5${count ? ` from ${count} reviews` : ""}`}
+    >
+      <ThemedText themeColor='tint' style={styles.stars}>
+        {stars.join("")}
       </ThemedText>
-      <ThemedText type="small" themeColor="textSecondary">
+      <ThemedText type='small' themeColor='textSecondary'>
         {rate.toFixed(1)}
-        {count !== undefined ? ` (${count})` : ''}
+        {count !== undefined ? ` (${count})` : ""}
       </ThemedText>
     </View>
   );
@@ -38,8 +46,8 @@ export function RatingStars({ rate, count }: RatingStarsProps) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
   },
   stars: {

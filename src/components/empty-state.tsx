@@ -1,8 +1,8 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Spacing } from "@/constants/theme";
 
 interface EmptyStateProps {
   title: string;
@@ -11,13 +11,20 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, message }: EmptyStateProps) {
   return (
-    <ThemedView style={styles.container} testID="empty-state">
-      <ThemedText style={styles.icon}>🔍</ThemedText>
-      <ThemedText type="smallBold" style={styles.title}>
+    <ThemedView style={styles.container} testID='empty-state'>
+      <ThemedText
+        testID='empty-state-title'
+        type='smallBold'
+        style={styles.title}
+      >
         {title}
       </ThemedText>
       {message ? (
-        <ThemedText themeColor="textSecondary" style={styles.message}>
+        <ThemedText
+          testID='empty-state-message'
+          themeColor='textSecondary'
+          style={styles.message}
+        >
           {message}
         </ThemedText>
       ) : null}
@@ -28,8 +35,8 @@ export function EmptyState({ title, message }: EmptyStateProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: Spacing.five,
     paddingTop: Spacing.six,
     gap: Spacing.one,
@@ -39,9 +46,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.two,
   },
   title: {
-    textAlign: 'center',
+    textAlign: "center",
   },
   message: {
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
