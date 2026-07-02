@@ -116,7 +116,7 @@ The guiding separation: `api/` talks to the network and knows nothing about Reac
 
 | Product List | Product Details | Favourites |
 |---|---|---|
-| ![Product List](docs/screenshots/product-list.png) | ![Product Details](docs/screenshots/product-details.png) | ![Favourites](docs/screenshots/favourites.png) |
+| ![Product List](assets/images/screenshots/product-list.png) | ![Product Details](assets/images/screenshots/product-details.png) | ![Favourites](assets/images/screenshots/favourites.png) |
 
 ## Assumptions and Limitations
 
