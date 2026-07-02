@@ -26,7 +26,7 @@ The app has three screens:
 - **Skeleton loaders** (bonus): pulsing placeholder cards during the initial fetch, instead of a bare spinner
 - **Accessibility labels** (bonus): interactive elements (cards, favourite buttons, search, category tabs, retry) have `accessibilityLabel`/`accessibilityRole`
 - **CI** (bonus): GitHub Actions runs lint, typecheck, and tests (with coverage) on every push/PR
-- **Coverage report** (bonus): `npm run test:coverage`
+- **Coverage report** (bonus): `bun run test:coverage`
 
 Not implemented (see [Assumptions and Limitations](#assumptions-and-limitations)): pagination/infinite scroll — the API returns the full catalogue (20 items) in one call, so there was nothing to paginate.
 
@@ -34,6 +34,7 @@ Not implemented (see [Assumptions and Limitations](#assumptions-and-limitations)
 
 | Concern | Choice | Why |
 |---|---|---|
+| Package manager | Bun | Fast installs; used for local dev and CI (`bun.lock` is the committed lockfile) |
 | Framework | Expo (React Native 0.86, SDK 57) | Fast setup, OTA-friendly, works on iOS/Android/web from one codebase |
 | Navigation | Expo Router (file-based, on React Navigation) | Was already bootstrapped in the starter; type-safe routes; a plain `Stack` is enough for 3 screens — no tab bar needed |
 | Language | TypeScript (`strict: true`) | Type safety for API responses, props, and store state |
@@ -48,38 +49,40 @@ Not implemented (see [Assumptions and Limitations](#assumptions-and-limitations)
 
 ## Installation
 
-Requires Node 20+ and npm.
+Requires Node 20+ and [Bun](https://bun.sh).
 
 ```bash
 git clone <this-repo-url>
 cd product-catalogue
-npm install --legacy-peer-deps
+bun install
 ```
 
-`--legacy-peer-deps` is required — see [Assumptions and Limitations](#assumptions-and-limitations) for why.
+If you'd rather use npm, `npm install --legacy-peer-deps` also works — see [Assumptions and Limitations](#assumptions-and-limitations) for why the flag is needed there.
 
 ## Running the App
 
 ```bash
-npm start        # opens Expo Dev Tools / QR code — scan with Expo Go, or press i/a
-npm run ios      # iOS simulator (macOS only)
-npm run android  # Android emulator
-npm run web      # browser
+bun run start   # opens Expo Dev Tools / QR code — scan with Expo Go, or press i/a
+bun run ios     # iOS simulator (macOS only)
+bun run android # Android emulator
+bun run web     # browser
 ```
 
 ## Running Tests
 
 ```bash
-npm test              # run once
-npm run test:watch    # watch mode
-npm run test:coverage # with a coverage report (text summary + coverage/ output)
+bun run test           # run once
+bun run test:watch     # watch mode
+bun run test:coverage  # with a coverage report (text summary + coverage/ output)
 ```
+
+> Use `bun run test`, not bare `bun test` — the latter invokes Bun's own built-in test runner instead of the `jest` script defined in `package.json`, and this project's tests are written for Jest (via `jest-expo`).
 
 Other scripts:
 
 ```bash
-npm run lint       # eslint .
-npm run typecheck  # tsc --noEmit
+bun run lint       # eslint .
+bun run typecheck  # tsc --noEmit
 ```
 
 All four (lint, typecheck, test, and coverage) also run in CI on every push/PR — see `.github/workflows/ci.yml`.
@@ -119,7 +122,8 @@ _Add screenshots or a short screen recording here before submitting (e.g. `docs/
 - **No pagination** — the Fake Store API's `/products` endpoint returns all ~20 products in a single response, so there was nothing meaningful to paginate. If the catalogue were larger, `useInfiniteQuery` would be a drop-in replacement for `useQuery` in `use-products.ts`.
 - **Search** is a simple case-insensitive substring match on title, computed client-side over the already-fetched list (the API has no search parameter). No debounce was added since filtering an in-memory array of ~20 items is effectively instant.
 - **Icons are text glyphs** (★ ♥ ♡ ✕) rather than an icon font library, to avoid an extra dependency and the native asset linking that can come with it.
-- **`npm install` requires `--legacy-peer-deps`.** This SDK 57 / React Native 0.86 stack is very new; a few packages (`jest-expo`'s bundled `jest-environment-jsdom`, `react-test-renderer` vs. the new `test-renderer` peer package used by React Native Testing Library v14) have peer ranges that lag slightly behind the exact versions in use. This is a resolution-time warning only — it doesn't affect app or test behaviour, and CI installs the same way.
+- **Package manager: Bun.** `bun install` resolves peer dependencies leniently by default, which matters here because this SDK 57 / React Native 0.86 stack is new enough that a couple of transitive peer ranges lag slightly behind the exact versions in use (e.g. `react-test-renderer`'s peer range vs. the pinned React version). If you use npm instead, you'll need `npm install --legacy-peer-deps` to get past that same mismatch — it's a resolution-time warning only and doesn't affect app or test behaviour. CI uses Bun for the same reason.
+- **`bun run test`, not `bun test`.** Bun ships its own test runner under the `bun test` command, which would silently ignore this project's Jest config. The `test` script in `package.json` runs Jest explicitly, so always go through `bun run test` (or `npm test`, which isn't ambiguous since npm has no built-in test runner).
 - **Tests are scoped to logic and presentation, not full screens.** `app/*` screens wire together navigation, React Query, and Zustand; testing them meaningfully would mean mocking all three, which felt like more test-infrastructure than the assignment's "at least two meaningful tests" called for. Instead, the tests target the actual logic: filtering, API error handling, the favourites store, and a component's render + interaction behaviour (18 tests across 4 suites).
 - **No visual regression / E2E tests** (e.g. Detox, Maestro) — out of scope for the time budget.
 - The screenshots section above is a placeholder — real screenshots/recording should be captured from a simulator or device run before final submission.
