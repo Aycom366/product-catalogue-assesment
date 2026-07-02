@@ -114,7 +114,9 @@ The guiding separation: `api/` talks to the network and knows nothing about Reac
 
 ## Screenshots
 
-_Add screenshots or a short screen recording here before submitting (e.g. `docs/screenshot-list.png`, `docs/screenshot-details.png`, `docs/demo.gif`)._
+| Product List | Product Details | Favourites |
+|---|---|---|
+| ![Product List](docs/screenshots/product-list.png) | ![Product Details](docs/screenshots/product-details.png) | ![Favourites](docs/screenshots/favourites.png) |
 
 ## Assumptions and Limitations
 
@@ -126,4 +128,3 @@ _Add screenshots or a short screen recording here before submitting (e.g. `docs/
 - **`bun run test`, not `bun test`.** Bun ships its own test runner under the `bun test` command, which would silently ignore this project's Jest config. The `test` script in `package.json` runs Jest explicitly, so always go through `bun run test` (or `npm test`, which isn't ambiguous since npm has no built-in test runner).
 - **Tests are scoped to logic and presentation, not full screens.** `app/*` screens wire together navigation, React Query, and Zustand; testing them meaningfully would mean mocking all three, which felt like more test-infrastructure than the assignment's "at least two meaningful tests" called for. Instead, the tests target the actual logic: filtering, API error handling, the favourites store, and a component's render + interaction behaviour (18 tests across 4 suites).
 - **No visual regression / E2E tests** (e.g. Detox, Maestro) — out of scope for the time budget.
-- The screenshots section above is a placeholder — real screenshots/recording should be captured from a simulator or device run before final submission.
