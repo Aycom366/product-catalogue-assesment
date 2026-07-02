@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
@@ -10,7 +10,7 @@ import { useTheme } from '@/hooks/use-theme';
  */
 export function ProductSkeleton() {
   const theme = useTheme();
-  const opacity = useRef(new Animated.Value(0.4)).current;
+  const [opacity] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
     const pulse = Animated.loop(
